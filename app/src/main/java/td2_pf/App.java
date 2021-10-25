@@ -6,6 +6,7 @@ package td2_pf;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class App {
@@ -56,7 +57,39 @@ public class App {
         consum.andThen(conprod).accept(4);
         consum.andThen(conprod).accept(5);
         System.out.println("sum = " + sum + " prod =" + prod);
+
+        //Ex2, question1
+        ex2Question1();
+
+        //Ex2. question2
      }
+
+    public static void ex2Question1() {
+        Predicate<Paire<Integer, Double>> tropPetit = x -> x.getFst() < 100;
+        Paire y = new Paire(10, 10.0);
+        System.out.println(tropPetit.test(y));
+        Predicate<Paire<Integer, Double>> tropGrand = x -> x.getFst() > 200;
+        Paire z = new Paire(210, 10.0);
+        System.out.println(tropGrand.test(z));
+        Predicate<Paire<Integer, Double>> tailleIncorrect = tropPetit.or(tropGrand);
+        Paire w = new Paire(210, 10.0);
+        System.out.println(tailleIncorrect.test(w));
+        Predicate<Paire<Integer, Double>> tailleCorrect = tailleIncorrect.negate();
+        Paire y1 = new Paire(190, 140.0);
+        System.out.println(tailleCorrect.test(y1));
+        Predicate<Paire<Integer, Double>> poidTropLourd = x -> x.getSnd() > 150.0;
+        Paire p1 = new Paire(190, 190.0);
+        System.out.println(poidTropLourd.test(p1));
+        Predicate<Paire<Integer, Double>> poidCorrect = x -> x.getSnd() < 150.0;
+        Paire p2 = new Paire(190, 90.0);
+        System.out.println(poidTropLourd.test(p2));
+        Predicate<Paire<Integer, Double>> accesAutoriser = x -> x.getFst().equals(tailleCorrect) && x.getSnd().equals(poidCorrect);
+        System.out.println(accesAutoriser.toString());
+    }
+    //
+    public <T> List<T> filtragePredicatif(List<T> x, Predicate<T> y){
+        return null;
+    }
 }
 interface Somme<T>{
     T somme(T x, T y);
@@ -64,5 +97,24 @@ interface Somme<T>{
 }
 interface Tstring<T>{
     String toString(T x);
+}
+class Paire<T,U> {
+    public T fst;
+    public U snd;
+    public Paire(T fst, U snd) {
+        this.fst = fst;
+        this.snd = snd;
+    }
+    @Override public String toString() {
+        return String.format("(%s,%s)",fst.toString(),snd.toString());
+    }
+    T getFst(){
+        return fst;
+    }
+    U getSnd(){
+        return snd;
+    }
+
+
 }
 
