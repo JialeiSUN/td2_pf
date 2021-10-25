@@ -3,12 +3,66 @@
  */
 package td2_pf;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+public class App {
+    private static Object Integer;
+    private static int sum = 0;
+    private static int prod = 1;
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
-    }
+        //question 1
+        Somme<Integer> intcal = (Integer x , Integer y) -> x+y;
+        System.out.println(intcal.somme(5,6));
+        Somme<Double>  doublcal = (Double x, Double y ) -> x+y;
+        System.out.println(doublcal.somme(3.22,5.22));
+        Somme<Long>    longcal = (Long x, Long y)->x+y;
+        System.out.println(longcal.somme(10L,23L));
+        Somme<String>  stirngcal = (String x, String y) -> x+y;
+        System.out.println(stirngcal.somme("hel","lo"));
+        //question2
+        Tstring<List<String>> liststring = (List<String> x) -> {
+                String test = String.join(",", x);
+                return test;
+        };
+        List<String> listtest = new ArrayList<>();
+        listtest.add("1");
+        listtest.add("2");
+        listtest.add("3");
+        System.out.println(liststring.toString(listtest));
+        Tstring<Map<String,String>> mapstring = (Map<String,String> x)->{
+            String test = "";
+            Iterator<String> iterator = x.keySet().iterator();
+            while(iterator.hasNext()){
+                String key  = iterator.next();
+                String value = x.get(key);
+                test +=key+":"+value+",";
+            }
+            return test;
+        };
+        Map<String,String> maptest = new HashMap<>();
+        maptest.put("key1","value1");
+        maptest.put("key2","value2");
+        maptest.put("key3","value3");
+        System.out.println(mapstring.toString(maptest));
+        //question3
+        Random random = new Random();
+        Supplier<Integer> newRandomInt = () -> random.nextInt(10);
+        System.out.println(newRandomInt.get());
+        Consumer<Integer> consum = x -> sum += x;
+        Consumer<Integer> conprod = x -> prod *= x;
+        consum.andThen(conprod).accept(4);
+        consum.andThen(conprod).accept(5);
+        System.out.println("sum = " + sum + " prod =" + prod);
+     }
 }
+interface Somme<T>{
+    T somme(T x, T y);
+
+}
+interface Tstring<T>{
+    String toString(T x);
+}
+
